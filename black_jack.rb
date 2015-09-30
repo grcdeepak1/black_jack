@@ -14,27 +14,27 @@ CARD_NUM   = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 CARD_SUIT  = ["\u2660", "\u2665", "\u2666", "\u2663"]
 
 def my_ask(msg)
-	return ask "=> #{msg}"
+  return ask "=> #{msg}"
 end
 
 def say(msg)
-	puts "=> #{msg}"
+  puts "=> #{msg}"
 end
 
 def init_deck()
-	CARD_NUM.product(CARD_SUIT)
+  CARD_NUM.product(CARD_SUIT)
 end
 
 def show_cards(deck, owner)
-	#system 'clear'
-	print "=> #{owner}'s cards:\t"
-	deck.each do |card|
-		print " "
-		print card.join.encode('utf-8')
-	end
-	value = calculate_total(deck)
-	print "\t total: #{value}"
-	print "\n"
+  #system 'clear'
+  print "=> #{owner}'s cards:\t"
+  deck.each do |card|
+    print " "
+    print card.join.encode('utf-8')
+  end
+  value = calculate_total(deck)
+  print "\t total: #{value}"
+  print "\n"
 end
 
 def calculate_total(cards) 
@@ -60,25 +60,25 @@ end
 
 
 def deal_card(deck, player_cards)
-	new_card = deck.shuffle.pop
-	index = deck.find_index(new_card)
-	if index
-		deck.delete_at(index)
-		player_cards << new_card
-	end
+  new_card = deck.shuffle.pop
+  index = deck.find_index(new_card)
+  if index
+    deck.delete_at(index)
+    player_cards << new_card
+  end
 end
 
 def check_winner(player_cards)
-	count = calculate_total(player_cards)
-	if(count == 21)
-		say("Blackjack! - You Win")
-		return "blackjack"
-	elsif(count > 21)
-		say("Busted! - You Lose")
-		return "busted"
-	else
-		return nil
-	end
+  count = calculate_total(player_cards)
+  if(count == 21)
+    say("Blackjack! - You Win")
+    return "blackjack"
+  elsif(count > 21)
+    say("Busted! - You Lose")
+    return "busted"
+  else
+    return nil
+  end
 end
 
 #Start of Game
@@ -88,65 +88,68 @@ say("Hello #{player_name}, Let's play some Blackjack!")
 
 #Game Loop
 begin
-	deck = init_deck
-	player_cards = []
-	dealer_cards = []
-	play_again = nil
-	dealer_value = 0
-	player_value = 0
+  deck = init_deck
+  player_cards = []
+  dealer_cards = []
+  play_again = nil
+  dealer_value = 0
+  player_value = 0
 
-	#Deal and show cards and total
-	say("Dealing 2 cards to #{player_name}")
-	deal_card(deck, player_cards)
-	deal_card(deck, dealer_cards)
-	deal_card(deck, player_cards)
-	deal_card(deck, dealer_cards)
-	show_cards(dealer_cards, "Dealer")
-	show_cards(player_cards, player_name)
+  #Deal and show cards and total
+  say("Dealing 2 cards to #{player_name}")
+  deal_card(deck, player_cards)
+  deal_card(deck, dealer_cards)
+  deal_card(deck, player_cards)
+  deal_card(deck, dealer_cards)
+  show_cards(dealer_cards, "Dealer")
+  show_cards(player_cards, player_name)
 
-	#Check for winner, exit game if there is a winner
-	if(check_winner(player_cards))
-		play_again = ask("Hey #{player_name}, do you want to play again ? (y/n)")
-		next
-	end
+  #Check for winner, exit game if there is a winner
+  if(check_winner(player_cards))
+    play_again = ask("Hey #{player_name}, do you want to play again ? (y/n)")
+    next
+  end
 
-	#Player's chance
-	player_value = calculate_total(player_cards)
-	player_action = ask("Choose Either to 1) Hit 2) Stay:", Integer) { |q| q.in = 1..2 }
-	while (player_action == 1)
-		deal_card(deck, player_cards)
-		show_cards(player_cards, player_name)
-		player_value = calculate_total(player_cards)
-		if(check_winner(player_cards))
-			play_again = ask("Hey #{player_name}, do you want to play again ? (y/n)")
-			break
-		end
-		player_action = ask("Choose Either to 1) Hit 2) Stay:", Integer) { |q| q.in = 1..2 }
-	end
+  #Player's chance
+  player_value = calculate_total(player_cards)
+  player_action = ask("Choose Either to 1) Hit 2) Stay:", Integer) { |q| q.in = 1..2 }
+  while (player_action == 1)
+    deal_card(deck, player_cards)
+    show_cards(player_cards, player_name)
+    player_value = calculate_total(player_cards)
+    if(check_winner(player_cards))
+      play_again = ask("Hey #{player_name}, do you want to play again ? (y/n)")
+      break
+    end
+    player_action = ask("Choose Either to 1) Hit 2) Stay:", Integer) { |q| q.in = 1..2 }
+  end
 
-	if(play_again)
-		next
-	end
+  if(play_again)
+    next
+  end
 
-	#Dealer's chance
-	say("Dealing cards for dealer..")
-	while (dealer_value < 17)
-		deal_card(deck, dealer_cards)
-		show_cards(dealer_cards, "Dealer")
-		dealer_value = calculate_total(dealer_cards)
-	end
+  #Dealer's chance
+  dealer_value = calculate_total(dealer_cards)
+  if (dealer_value < 17)
+    say("Dealing cards for dealer..")
+  end
+  while (dealer_value < 17)
+    deal_card(deck, dealer_cards)
+    show_cards(dealer_cards, "Dealer")
+    dealer_value = calculate_total(dealer_cards)
+  end
 
-	#Logic to decide winner
-	if (dealer_value == player_value)
-		say("It's a push/Tie !")
-	elsif(dealer_value > 21)
-		say("Dealer Busted!, You Win")
-	elsif(dealer_value < player_value)
-		say("You Win!")
-	elsif(dealer_value > player_value)
-		say("Dealer Wins!")
-	end
+  #Logic to decide winner
+  if (dealer_value == player_value)
+    say("It's a push/Tie !")
+  elsif(dealer_value > 21)
+    say("Dealer Busted!, You Win")
+  elsif(dealer_value < player_value)
+    say("You Win!")
+  elsif(dealer_value > player_value)
+    say("Dealer Wins!")
+  end
 
-	play_again = ask("Hey #{player_name}, do you want to play again ? (y/n)")
+  play_again = ask("Hey #{player_name}, do you want to play again ? (y/n)")
 end until play_again == "n"
 
