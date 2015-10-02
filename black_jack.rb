@@ -26,11 +26,10 @@ def init_deck()
 end
 
 def show_cards(deck, owner)
-  #system 'clear'
   print "=> #{owner}'s cards:\t"
   deck.each do |card|
     print " "
-    print card.join.encode('utf-8')
+    print card.join
   end
   value = calculate_total(deck)
   print "\t total: #{value}"
@@ -82,6 +81,7 @@ def check_winner(player_cards)
 end
 
 #Start of Game
+system 'clear'
 say("Welcome to Blackjack!")
 player_name = my_ask("Please Enter your Name : ") 
 say("Hello #{player_name}, Let's play some Blackjack!")
@@ -97,10 +97,10 @@ begin
 
   #Deal and show cards and total
   say("Dealing 2 cards to #{player_name}")
-  deal_card(deck, player_cards)
-  deal_card(deck, dealer_cards)
-  deal_card(deck, player_cards)
-  deal_card(deck, dealer_cards)
+  2.times do
+    deal_card(deck, player_cards)
+    deal_card(deck, dealer_cards)
+  end
   show_cards(dealer_cards, "Dealer")
   show_cards(player_cards, player_name)
 
@@ -113,6 +113,7 @@ begin
   #Player's chance
   player_value = calculate_total(player_cards)
   player_action = ask("Choose Either to 1) Hit 2) Stay:", Integer) { |q| q.in = 1..2 }
+  system 'clear'
   while (player_action == 1)
     deal_card(deck, player_cards)
     show_cards(player_cards, player_name)
@@ -124,9 +125,7 @@ begin
     player_action = ask("Choose Either to 1) Hit 2) Stay:", Integer) { |q| q.in = 1..2 }
   end
 
-  if(play_again)
-    next
-  end
+  next if play_again
 
   #Dealer's chance
   dealer_value = calculate_total(dealer_cards)
